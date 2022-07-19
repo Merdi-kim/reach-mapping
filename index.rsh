@@ -5,45 +5,46 @@ export const main = Reach.App(() => {
   setOptions({ untrustworthyMaps: true });
   const A = Participant('Deployer', {
     reportInfo:Fun([], Null),
+    tokenToDistribute: Tuple(Token, UInt)
   });
   const B = API('Participant', {
     whiteList:Fun([Address], UInt),
-    //reportInfo:Fun([], Null)
   });
-  /*const C = API('Payment', {
-    paying:Fun([Address], Null)
-  })*/
 
   init();
-  
-  A.publish();
-  A.interact.reportInfo()
+  A.only(() => {
+    const [token, amount] = declassify(interact.tokenToDistribute)
+  })
+  /*A.publish(token, amount)
+  commit()
+  A.pay([ [amount, token] ])
+  commit()*/
+  A.publish()
 
   const whiteListedAddresses = new Map(Object({
     whiteListed:Bool
   }))
 
-  const [whiteListedAddressesLength] =
-  parallelReduce([0])
+  const [whiteListedAddressesLength, canWhiteList] =
+  parallelReduce([0, true])
   .invariant(balance() == 0)
-  .while(/*whiteListedAddressesLength < 5*/ true)
+  .while(canWhiteList)
   .api(B.whiteList, 
+    (_) => {
+      check(isNone(whiteListedAddresses[this]), "You're already whitelisted");
+      check(whiteListedAddressesLength < 5, "Whitelist spots are done");
+    },
+    (_) => 0,
     (who, k) => {
-      //check(isNone(whiteListedAddresses[who]), "You're already whitelisted")
+      check(isNone(whiteListedAddresses[this]), "You're not whitelisted")
       check(whiteListedAddressesLength < 5, "Whitelist spots are done")
-      whiteListedAddresses[who] = {whiteListed:true}
-      k(whiteListedAddressesLength+1)
-      return [whiteListedAddressesLength+1] 
+      whiteListedAddresses[who] = {whiteListed:true};
+      k(whiteListedAddressesLength+1);
+      return [whiteListedAddressesLength+1, true];
     }
   )
-  /*.api(C.paying, 
-    (who,k) => {
-      check(whiteListedAddress.member(who), "You are not whitelisted");
-      transfer(4).to(who)
-      whiteListedAddresses.remove(who)
-    }
-  )*/
 
+  transfer(token).to(A)
   commit();
   exit();
 

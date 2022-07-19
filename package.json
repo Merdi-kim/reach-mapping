@@ -1,0 +1,15 @@
+{
+  "name": "@reach-sh/reach-mapping",
+  "type": "module",
+  "dependencies": {
+    "@randlabs/myalgo-connect": "^1.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "author": "reach.sh",
+  "license": "Apache-2.0",
+  "scripts": {
+    "lint": "eslint --ignore-path .gitignore --ext .mjs .",
+    "index": "node --experimental-modules --unhandled-rejections=strict index.mjs"
+  }
+}

@@ -13,25 +13,34 @@ const initialAmount = stdlib.parseCurrency(20)
 if(roles[role-1] === "Deployer") {
     const deployerAccount= await stdlib.newTestAccount(initialAmount);
     const deployerCtc = deployerAccount.contract(backend);
-    const DeployerInteract = {
+    const reachToken = await stdlib.launchToken(deployerAccount, "reachToken", "RTK");
+    await reachToken.mint(deployerAccount, initialAmount)
+    const amt = await stdlib.balanceOf(deployerAccount, reachToken.id);
+    console.log(stdlib.formatCurrency(amt))
+    /*const DeployerInteract = {
         reportInfo: async() => {
           console.log(`Contract info: ${JSON.stringify(await deployerCtc.getInfo())}`);
         },
     };
     await deployerCtc.participants.Deployer(DeployerInteract)
-} else {
-    const accounts = await stdlib.newTestAccounts(2,initialAmount);
+} /*else {
+    const accounts = await stdlib.newTestAccounts(10,initialAmount);
     const whiteList = async(who) => {
-      const user = accounts[who]
-      const info = await ask.ask('Paste contract info:', (s) => JSON.parse(s));
-      const attacherCtc = user.contract(backend, info);
-      const passed = await attacherCtc.apis.Participant.whiteList(user.networkAccount.addr);
-      console.log(Number(passed))
+      try {
+        const user = accounts[who]
+        const info = await ask.ask('Paste contract info:', (s) => JSON.parse(s));
+        const attacherCtc = user.contract(backend, info);
+        const passed = await attacherCtc.apis.Participant.whiteList(user.networkAccount.addr);
+        console.log(`spot-${Number(passed)} filled`)
+      } catch(err) {
+        console.log("Fsiled to add you bro")
+      }
+      
     }
 
-    for(let i = 0; i<3;i++) {
+    for(let i = 0; i<10;i++) {
       await whiteList(i)
-    }
+    }*/
 
     
 }
