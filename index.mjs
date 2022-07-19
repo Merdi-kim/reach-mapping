@@ -1,5 +1,5 @@
 import { loadStdlib } from '@reach-sh/stdlib';
-import * as backend from './build/index.main.mjs';
+import * as backend from '../build/index.main.mjs';
 import {ask} from '@reach-sh/stdlib';
 
 const stdlib = loadStdlib(process.env);
@@ -12,15 +12,20 @@ const initialAmount = stdlib.parseCurrency(20)
 
 if(roles[role-1] === "Deployer") {
     const deployerAccount= await stdlib.newTestAccount(initialAmount);
+    const ccount= await stdlib.newTestAccount(initialAmount);
     const deployerCtc = deployerAccount.contract(backend);
     const reachToken = await stdlib.launchToken(deployerAccount, "reachToken", "RTK");
     await reachToken.mint(deployerAccount, initialAmount)
     const amt = await stdlib.balanceOf(deployerAccount, reachToken.id);
     console.log(stdlib.formatCurrency(amt))
-    /*const DeployerInteract = {
+    const DeployerInteract = {
         reportInfo: async() => {
           console.log(`Contract info: ${JSON.stringify(await deployerCtc.getInfo())}`);
         },
+        addressToWhiteList:ccount.networkAccount.addr,
+        displayAddress: (add) => {
+          console.log(`here is the whitelistedAddress: ${add}`)
+        }
     };
     await deployerCtc.participants.Deployer(DeployerInteract)
 } /*else {
@@ -43,6 +48,6 @@ if(roles[role-1] === "Deployer") {
     }*/
 
     
-}
+
 
 ask.done();
