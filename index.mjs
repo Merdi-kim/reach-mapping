@@ -1,35 +1,32 @@
-import { loadStdlib } from '@reach-sh/stdlib';
-import * as backend from '../build/index.main.mjs';
-import {ask} from '@reach-sh/stdlib';
+import { loadStdlib, ask } from '@reach-sh/stdlib';
+import * as backend from './build/index.main.mjs'
 
 const stdlib = loadStdlib(process.env);
 
 const roles = ["Deployer", "Participant"]
-
 const role = await ask.ask("Which role are you playing: 1.Deployer or 2.Participant")
-
 const initialAmount = stdlib.parseCurrency(20)
 
 if(roles[role-1] === "Deployer") {
     const deployerAccount= await stdlib.newTestAccount(initialAmount);
-    const ccount= await stdlib.newTestAccount(initialAmount);
+    const accountToWhiteList= await stdlib.newTestAccount(initialAmount);
     const deployerCtc = deployerAccount.contract(backend);
-    const reachToken = await stdlib.launchToken(deployerAccount, "reachToken", "RTK");
+    /*const reachToken = await stdlib.launchToken(deployerAccount, "reachToken", "RTK");
     await reachToken.mint(deployerAccount, initialAmount)
-    const amt = await stdlib.balanceOf(deployerAccount, reachToken.id);
-    console.log(stdlib.formatCurrency(amt))
+    const amt = await stdlib.balanceOf(deployerAccount, reachToken.id);*/
     const DeployerInteract = {
         reportInfo: async() => {
           console.log(`Contract info: ${JSON.stringify(await deployerCtc.getInfo())}`);
         },
-        addressToWhiteList:ccount.networkAccount.addr,
+        addressToWhiteList: () => accountToWhiteList.networkAccount.addr,
         displayAddress: (add) => {
-          console.log(`here is the whitelistedAddress: ${add}`)
+          console.log(`Here is the whitelistedAddress: ${add}`)
         }
     };
     await deployerCtc.participants.Deployer(DeployerInteract)
-} /*else {
-    const accounts = await stdlib.newTestAccounts(10,initialAmount);
+} else {
+  console.log("This part is under development")
+    /*const accounts = await stdlib.newTestAccounts(10,initialAmount);
     const whiteList = async(who) => {
       try {
         const user = accounts[who]
@@ -46,7 +43,7 @@ if(roles[role-1] === "Deployer") {
     for(let i = 0; i<10;i++) {
       await whiteList(i)
     }*/
-
+  }
     
 
 

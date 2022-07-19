@@ -5,7 +5,7 @@ export const main = Reach.App(() => {
   setOptions({ untrustworthyMaps: true });
   const A = Participant('Deployer', {
     reportInfo:Fun([], Null),
-    addressToWhiteList: Address,
+    addressToWhiteList: Fun([], Address) ,
     displayAddress:Fun([Address], Null)
     //tokenToDistribute: Fun([], Tuple(Token, UInt))
   });
@@ -16,15 +16,13 @@ export const main = Reach.App(() => {
   init();
 
   A.only(() => {
-    const address = declassify(interact.addressToWhiteList)
+    const address = declassify(interact.addressToWhiteList())
   })
- 
   A.publish(address)
   A.interact.reportInfo()
   const whiteListedAddresses = new Set()
   whiteListedAddresses.insert(address)
   A.interact.displayAddress(address)
-
   commit()
   /*A.pay([ [amount, token ]])
 
